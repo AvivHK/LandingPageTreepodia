@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { inject } from "mobx-react";
 import Iframe from 'react-iframe'
 
 class Header extends Component {
