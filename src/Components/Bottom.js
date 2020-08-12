@@ -65,7 +65,7 @@ class Bottom extends Component {
         console.log(this.state.requireIndustryOther)
         console.log(this.state.requireEmail)
 
-        if (!(this.state.requireFirstName && this.state.requireFamilyName && this.state.requireCompany && this.state.requireWebsite && this.state.requireIndustry && this.state.requireIndustryOther && this.state.requireEmail)) {
+        if ((this.state.requireFirstName && this.state.requireFamilyName && this.state.requireCompany && this.state.requireWebsite && this.state.requireIndustry && this.state.requireIndustryOther && this.state.requireEmail)) {
             await this.setState({
                 sent: true
             })
