@@ -171,6 +171,12 @@ class Bottom extends Component {
                 boolIndustry: true
             })
         }
+        else {
+            this.setState({
+                boolIndustry: false
+            })
+
+        }
     }
 
 
