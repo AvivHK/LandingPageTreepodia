@@ -1645,6 +1645,7 @@ ul {
 
 .required{
     font-size: 8px !important;
+    color: red;
 }
 
 @media (min-width: 641px) {
