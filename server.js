@@ -26,13 +26,13 @@ app.post("/sendmail", (req, res) => {
   let user = req.body;
   var mailOptions1 = {
     from: 'avivhh@gmail.com',
-    to: 'avivhkn@gmail.com',
+    to: 'tal@treepodia.com',
     subject: "A new contact detail arrived!",
     text: `contact name: ${user.firstName} contact last name: ${user.familyName} company: ${user.company}, website: ${user.website}, industry: ${user.industry} ${user.industryOther ? "-" + user.industryOther : ""}, email: ${user.email}, phone: ${user.phone}`
   };
   var mailOptions2 = {
     from: 'avivhh@gmail.com',
-    to: 'avivhkn@gmail.com',
+    to: 'ronr@treepodia.com',
     subject: "A new contact detail arrived!",
     text: `contact name: ${user.firstName} contact last name: ${user.familyName} company: ${user.company}, website: ${user.website}, industry: ${user.industry} ${user.industryOther ? "-" + user.industryOther : ""}, email: ${user.email}, phone: ${user.phone}`
   };
