@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as firebase from 'firebase';
 import axios from "axios";
+var validator = require('validator');
 const userRoute = "http://localhost:4200";
 
 
@@ -37,6 +38,7 @@ class Bottom extends Component {
             requireIndustry: false,
             requireIndustryOther: false,
             requireEmail: false,
+            sent: false
         }
     }
 
@@ -54,18 +56,20 @@ class Bottom extends Component {
     }
 
     buttonClicked = async () => {
-        this.sendMail()
         await this.checkValues()
         console.log(this.state.requireFirstName)
         console.log(this.state.requireFamilyName)
         console.log(this.state.requireCompany)
         console.log(this.state.requireWebsite)
         console.log(this.state.requireIndustry)
-        console.log(this.state.requireEmail)
         console.log(this.state.requireIndustryOther)
+        console.log(this.state.requireEmail)
 
-        if (this.state.requireFirstName && this.state.requireFamilyName && this.state.requireCompany && this.state.requireWebsite && this.state.requireIndustry && this.state.requireIndustryOther && this.state.requireEmail) {
-            app.database().ref('users' + this.state.email).set({
+        if (!(this.state.requireFirstName && this.state.requireFamilyName && this.state.requireCompany && this.state.requireWebsite && this.state.requireIndustry && this.state.requireIndustryOther && this.state.requireEmail)) {
+            await this.setState({
+                sent: true
+            })
+            app.database().ref(`users/` + this.state.firstName + this.state.familyName).set({
                 firstName: this.state.firstName,
                 familyName: this.state.familyName,
                 company: this.state.company,
@@ -74,12 +78,12 @@ class Bottom extends Component {
                 email: this.state.email,
                 phone: this.state.phone,
             });
-            console.log("avov")
+            await this.sendMail()
         }
     }
 
     checkValues = async () => {
-        if (this.state.firstName === "") {
+        if (this.state.firstName.length < 3) {
             await this.setState({
                 requireFirstName: true
             })
@@ -89,36 +93,40 @@ class Bottom extends Component {
                 requireFirstName: false
             })
         }
-        if (this.state.familyName === "") {
+
+        if (this.state.familyName.length < 3) {
             await this.setState({
                 requireFamilyName: true
             })
         }
         else {
             await this.setState({
-                requireFirstName: false
+                requireFamilyName: false
             })
         }
-        if (this.state.company === "") {
+
+        if (this.state.company.length < 3) {
             await this.setState({
                 requireCompany: true
             })
         }
         else {
             await this.setState({
-                requireFirstName: false
+                requireCompany: false
             })
         }
-        if (this.state.website === "") {
+
+        if (this.state.website.length < 3) {
             await this.setState({
                 requireWebsite: true
             })
         }
         else {
             await this.setState({
-                requireFirstName: false
+                requireWebsite: false
             })
         }
+
         if (this.state.industry === "") {
             await this.setState({
                 requireIndustry: true
@@ -126,17 +134,29 @@ class Bottom extends Component {
         }
         else {
             await this.setState({
-                requireFirstName: false
+                requireIndustry: false
             })
         }
-        if (this.state.industryOther === "" && this.state.industry === "other") {
+
+        if (this.state.industryOther.length < 3 && this.state.industry === "other") {
             await this.setState({
                 requireIndustryOther: true
             })
         }
-        if (this.state.email === "") {
+        else {
+            await this.setState({
+                requireIndustryOther: false
+            })
+        }
+
+        if (!validator.isEmail(this.state.email)) {
             await this.setState({
                 requireEmail: true
+            })
+        }
+        else {
+            await this.setState({
+                requireEmail: false
             })
         }
     }
@@ -154,70 +174,76 @@ class Bottom extends Component {
     }
 
 
-
-
     render() {
         return (
             <div className="container-sm">
-                <div className="pricing-inner section-inner">
-                    <div className="pricing-header text-center">
-                        <h2 className="section-title mt-0">Contact us today to try it:</h2>
-                    </div>
-                    <div className="pricing-tables-wrap">
-                        <div className="pricing-table">
-                            <div className="pricing-table-inner is-revealing">
-                                <div className="pricing-table-main">
-                                    <div id="forum" className="pricing-table-header pb-24">
+                {!this.state.sent ?
+                    <div className="pricing-inner section-inner">
+                        <div className="pricing-header text-center">
+                            <h2 className="section-title mt-0">Contact us today to try it:</h2>
+                        </div>
+                        <div className="pricing-tables-wrap">
+                            <div className="pricing-table">
+                                <div className="pricing-table-inner is-revealing">
+                                    <div className="pricing-table-main">
+                                        <div id="forum" className="pricing-table-header pb-24">
+                                        </div>
+                                        <ul className="pricing-table-features list-reset text-xs">
+                                            <li id="firstName" className="labelAndInput">
+                                                <span className="label">First Name:</span>
+                                                <input id="firstNameInput" className="myInput" onChange={this.changeValue} value={this.state.firstName}></input>
+                                                {this.state.requireFirstName ? <div className='required'>Must be bigger then 3 characters</div> : null}
+                                            </li>
+                                            <li id="familyName" className="labelAndInput">
+                                                <span className="label">Family Name:</span>
+                                                <input id="lastNameInput" className="myInput" onChange={this.changeValue} value={this.state.familyName}></input>
+                                                {this.state.requireFamilyName ? <div className='required'>Must be bigger then 3 characters</div> : null}
+                                            </li>
+                                            <li id="company" className="labelAndInput">
+                                                <span className="label">Company:</span>
+                                                <input id="companyInput" className="myInput" onChange={this.changeValue} value={this.state.company}></input>
+                                                {this.state.requireCompany ? <div className='required'>Must be bigger then 3 characters</div> : null}
+                                            </li>
+                                            <li id="website" className="labelAndInput">
+                                                <span className="label">Website:</span>
+                                                <input id="websiteInput" className="myInput" onChange={this.changeValue} value={this.state.website}></input>
+                                                {this.state.requireWebsite ? <div className='required'>Must be bigger then 3 characters</div> : null}
+                                            </li>
+                                            <li id="industry" className="labelAndInput">
+                                                <span className="label">Industry:</span>
+                                                <select id="IndustrySelect" onChange={this.changeValue} value={this.state.industry}>
+                                                    <option value=""></option>
+                                                    <option value="retail">Retail</option>
+                                                    <option value="travel">Travel</option>
+                                                    <option value="services">Services</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                                {this.state.requireIndustry ? <div className='required'>You must choose one option</div> : null}
+                                            </li>
+                                            {this.state.boolIndustry ? <li id="industryOther" className="labelAndInput">
+                                                <span className="label">Other:</span>
+                                                <input id="industryOtherInput" className="myInput" onChange={this.changeValue} value={this.state.industryOther}></input>
+                                                {this.state.requireIndustryOther ? <div className='required'>Must be bigger then 3 characters</div> : null}
+                                            </li> : null}
+                                            <li id="email" className="labelAndInput">
+                                                <span className="label">Email:</span>
+                                                <input id="emailInput" className="myInput" onChange={this.changeValue} value={this.state.email}></input>
+                                                {this.state.requireEmail ? <div className='required'>must be a valid email address</div> : null}
+                                            </li>
+                                            <li id="phone" className="labelAndInput">
+                                                <span className="label">Phone:</span>
+                                                <input id="phoneInput" className="myInput" onChange={this.changeValue} value={this.state.phone}></input>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul className="pricing-table-features list-reset text-xs">
-                                        <li id="firstName" className="labelAndInput">
-                                            <span className="label">First Name:</span>
-                                            <input id="firstNameInput" className="myInput" onChange={this.changeValue} value={this.state.firstName}></input>
-                                            {this.state.requireFirstName ? <div className='required'>Must be bigger then 3 characters</div> : null}
-                                        </li>
-                                        <li id="familyName" className="labelAndInput">
-                                            <span className="label">Family Name:</span>
-                                            <input id="lastNameInput" className="myInput" onChange={this.changeValue} value={this.state.familyName}></input>
-                                        </li>
-                                        <li id="company" className="labelAndInput">
-                                            <span className="label">Company:</span>
-                                            <input id="companyInput" className="myInput" onChange={this.changeValue} value={this.state.company}></input>
-                                        </li>
-                                        <li id="website" className="labelAndInput">
-                                            <span className="label">Website:</span>
-                                            <input id="websiteInput" className="myInput" onChange={this.changeValue} value={this.state.website}></input>
-                                        </li>
-                                        <li id="industry" className="labelAndInput">
-                                            <span className="label">Industry:</span>
-                                            <select id="IndustrySelect" onChange={this.changeValue} value={this.state.industry}>
-                                                <option value=""></option>
-                                                <option value="retail">Retail</option>
-                                                <option value="travel">Travel</option>
-                                                <option value="services">Services</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </li>
-                                        {this.state.boolIndustry ? <li id="industryOther" className="labelAndInput">
-                                            <span className="label">Other:</span>
-                                            <input id="industryOtherInput" className="myInput" onChange={this.changeValue} value={this.state.industryOther}></input>
-                                        </li> : null}
-                                        <li id="email" className="labelAndInput">
-                                            <span className="label">Email:</span>
-                                            <input id="emailInput" className="myInput" onChange={this.changeValue} value={this.state.email}></input>
-                                        </li>
-                                        <li id="phone" className="labelAndInput">
-                                            <span className="label">Phone:</span>
-                                            <input id="phoneInput" className="myInput" onChange={this.changeValue} value={this.state.phone}></input>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="pricing-table-cta mb-8">
-                                    <a id="myBtn" onClick={this.buttonClicked} className="button button-primary button-shadow button-block">I want to learn more</a>
+                                    <div className="pricing-table-cta mb-8">
+                                        <a id="myBtn" onClick={this.buttonClicked} className="button button-primary button-shadow button-block">I want to learn more</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    : <h1>Sent! Thanks!</h1>}
             </div >
         )
     }
