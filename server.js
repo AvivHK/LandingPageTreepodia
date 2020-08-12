@@ -38,12 +38,27 @@ app.post("/sendmail", (req, res) => {
   };
   var mailOptions3 = {
     from: 'avivhh@gmail.com',
-    to: 'avivhkn@gmail.com',
+    to: 'avivhkn@gmai.com',
     subject: "A new contact detail arrived!",
     text: `contact name: ${user.firstName} contact last name: ${user.familyName} company: ${user.company}, website: ${user.website}, industry: ${user.industry} ${user.industryOther ? "-" + user.industryOther : ""}, email: ${user.email}, phone: ${user.phone}`
   };
-  transporter.sendMail(mailOptions2, function (error, info) {
-  transporter.sendMail(mailOptions1, function (error, info) {
+
+  // transporter.sendMail(mailOptions2, function (error, info) {
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log('Email sent: ' + info.response + user);
+  //   }
+  // });
+
+  // transporter.sendMail(mailOptions1, function (error, info) {
+  //   if (error) {
+  //     console.log(error);
+  //   } else {
+  //     console.log('Email sent: ' + info.response + user);
+  //   }
+  // });
+
   transporter.sendMail(mailOptions3, function (error, info) {
     if (error) {
       console.log(error);
